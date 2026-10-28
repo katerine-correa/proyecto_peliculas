@@ -53,8 +53,24 @@ const updateProductora = async (req, res) => {
   }
 };
 
+//(DELETE)
+const deleteProductora = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const resultado = await db.query('DELETE FROM productoras WHERE id = $1 RETURNING *', [id]);
+    if (resultado.rows.length === 0) {
+      return res.status(404).json({ mensaje: 'Productora no encontrada' });
+    }
+    res.status(200).json({ mensaje: 'Productora eliminada con éxito', productora: resultado.rows[0] });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error al eliminar la productora' });
+  }
+};
+
 module.exports = {
   getProductoras,
   createProductora,
-  updateProductora
+  updateProductora,
+  deleteProductora
 };

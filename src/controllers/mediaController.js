@@ -81,8 +81,32 @@ const updateMedia = async (req, res) => {
   }
 };
 
+//(DELETE)
+const deleteMedia = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const mediaEliminada = await db.query(
+      'DELETE FROM media WHERE id = $1 RETURNING *',
+      [id]
+    );
+
+    if (mediaEliminada.rows.length === 0) {
+      return res.status(404).json({ mensaje: 'Contenido multimedia no encontrado' });
+    }
+
+    res.status(200).json({
+      mensaje: 'Contenido multimedia eliminado con éxito',
+      media: mediaEliminada.rows[0]
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error al eliminar el contenido multimedia' });
+  }
+};
+
 module.exports = {
   getMedia,
   createMedia,
-  updateMedia
+  updateMedia,
+  deleteMedia
 };

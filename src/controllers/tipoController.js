@@ -53,8 +53,24 @@ const updateTipo = async (req, res) => {
   }
 };
 
+//(DELETE)
+const deleteTipo = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const resultado = await db.query('DELETE FROM tipos WHERE id = $1 RETURNING *', [id]);
+    if (resultado.rows.length === 0) {
+      return res.status(404).json({ mensaje: 'Tipo no encontrado' });
+    }
+    res.status(200).json({ mensaje: 'Tipo eliminado con éxito', tipo: resultado.rows[0] });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error al eliminar el tipo' });
+  }
+};
+
 module.exports = {
   getTipos,
   createTipo,
-  updateTipo
+  updateTipo,
+  deleteTipo
 };

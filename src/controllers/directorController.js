@@ -53,8 +53,24 @@ const updateDirector = async (req, res) => {
   }
 };
 
+//(DELETE)
+const deleteDirector = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const resultado = await db.query('DELETE FROM directores WHERE id = $1 RETURNING *', [id]);
+    if (resultado.rows.length === 0) {
+      return res.status(404).json({ mensaje: 'Director no encontrado' });
+    }
+    res.status(200).json({ mensaje: 'Director eliminado con éxito', director: resultado.rows[0] });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error al eliminar el director' });
+  }
+};
+
 module.exports = {
   getDirectores,
   createDirector,
-  updateDirector
+  updateDirector,
+  deleteDirector
 };
